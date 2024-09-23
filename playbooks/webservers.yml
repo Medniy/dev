@@ -1,0 +1,30 @@
+---
+- name: Настройка веб-сервера с Nginx
+  hosts: webservers
+  become: True
+  tasks:
+    - name: Убедиться, что Nginx установлен
+      package:
+        name: nginx
+        update_cache: yes
+
+    - name: Копировать конфигурационный файл Nginx
+      copy:
+        src: nginx.conf
+        dest: /etc/nginx/sites-available/default
+
+    - name: Включить конфигурацию
+      file:
+        src: /etc/nginx/sites-available/default
+        dest: /etc/nginx/sites-enabled/default
+        state: link
+
+    - name: Копировать файл index.html
+      template:
+        src: index.html.j2
+        dest: /usr/share/nginx/html/index.html
+
+    - name: Перезапустить Nginx
+      service:
+        name: nginx
+        state: restarted
