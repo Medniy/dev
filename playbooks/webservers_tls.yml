@@ -15,6 +15,7 @@
       service:
         name: nginx
         state: restarted
+  
 
   tasks:
     - name: Ensure nginx is installed
@@ -22,6 +23,26 @@
         name: nginx
         update_cache: true
       notify: Restart nginx
+
+    - name: Проверка сертификата
+      community.crypto.x509_certificate_info:
+        path: '{{ tls_dir + cert_file }}'
+        valid_at:
+          point: "+30d"          
+      register: result
+
+    - name: Создать новый самоподписанный сертификат
+      openssl_certificate:
+        path: '{{ tls_dir + cert_file }}'
+        privatekey_path: '{{ tls_dir + key_file }}'
+        provider: selfsigned
+       
+        state: present
+      when: not result.valid_at.point
+
+    - name: debug
+      debug:
+        msg: "{{ result.valid_at.point }}"
 
     - name: Create directories for TLS certificates
       file:
@@ -38,7 +59,9 @@
       loop:
         - "{{ key_file }}"
         - "{{ cert_file }}"
-      notify: Restart nginx
+      notify: Restart nginx     
+
+    
 
     - name: Manage nginx config template
       template:
