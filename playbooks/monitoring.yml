@@ -1,0 +1,25 @@
+- name: Настройка мониторинга серверов с помощью netstat
+  hosts: production
+  become: yes  # Если требуется выполнение команды с правами суперпользователя
+  tasks:
+    - name: Установить netstat
+      package: 
+        name: net-tools
+        state: present
+      become: yes
+      
+    - name: Запустить netstat на удалённых серверах
+      ansible.builtin.command:
+        cmd: netstat -tuln
+      register: netstat_output  # Регистрируем вывод команды
+
+    - name: Сохранить вывод netstat в файл на удалённом сервере
+      ansible.builtin.copy:
+        content: "{{ netstat_output.stdout }}"
+        dest: /tmp/netstat_output_{{ inventory_hostname }}.txt
+
+    - name: Скопировать файл с удалённого сервера на локальную машину
+      ansible.builtin.fetch:
+        src: /tmp/netstat_output_{{ inventory_hostname }}.txt
+        dest: /home/admuser/netstat_results/netstat_output_{{ inventory_hostname }}.txt
+        flat: yes

@@ -1,0 +1,81 @@
+---
+- name: Install and configure web server
+  hosts: webservers
+  become: true
+  handlers:
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
+  
+  
+  tasks:  
+    - name: Install Nginx
+      package:
+        name: nginx
+        state: present
+
+    - name: Deploy web application
+      copy:
+        src: templates/index.html.j2
+        dest: /var/www/html/index.html
+      notify: Restart Nginx
+
+- name: Install and configure database server
+  hosts: dbservers
+  become: true
+  tasks:
+    - name: Install MySQL
+      package:
+        name: mysql-server
+        state: present
+    - name: Установить зависимости для библиотеки mysqlclient для Python 3      
+      package:
+        name: 
+          - python3-dev 
+          - build-essential
+          - libssl-dev 
+          - libmysqlclient-dev
+          - python3-mysql.connector
+          - python3-pip
+          - python3-xyzservices
+        state: present
+
+    - name: Установить PyMySQL через apt
+      ansible.builtin.package:
+        name: python3-pymysql
+        state: present
+      become: yes
+
+    - name: Prepare database
+      mysql_db:
+        name: myapp_db
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        login_user: root       
+        state: present
+
+- name: List installed packages on local host
+  hosts: local
+  become: true
+  tasks:
+    - name: List installed packages
+      command: dpkg --list
+      register: packages_list
+
+    - debug:
+        var: packages_list.stdout
+- name: Install and configure web server
+  hosts: webservers
+    
+  tasks:
+    - name: "Test it! https://10.130.0.34:443/index.html"
+      delegate_to: localhost
+      become: false
+      uri:
+        url: "https://10.130.0.34:443/index.html"
+        validate_certs: false
+        return_content: true
+      register: this
+      failed_when: "'Running on ' in this.content"
+      tags:
+        - test

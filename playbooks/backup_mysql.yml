@@ -1,0 +1,21 @@
+- name: Backup database server
+  hosts: dbservers
+  become: true
+  tasks:
+    - name: Выполнить бэкап базы данных
+      command:
+        cmd: "mysqldump -u root  myapp_db > /backup/myapp_db.sql"
+      args:
+        removes: /backup/myapp_db.sql
+      register: mysql_backup
+      ignore_errors: yes
+
+    - name: Проверка успешности выполнения бэкапа
+      debug:
+        msg: "Бэкап выполнен успешно!"
+      when: mysql_backup.rc == 0
+    
+    - name: Копирование бэкапа на локальную машину
+      fetch:
+        src: /backup/myapp_db.sql
+        dest: /home/admuser/backup/myapp_db.sql
