@@ -1,5 +1,5 @@
 - name: Настройка веб-сервера
-  hosts: webservers
+  hosts: dbservers
   become: true
  
   tasks:

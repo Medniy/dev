@@ -1,0 +1,16 @@
+---
+- name: Example hostvars
+  hosts: production
+  gather_facts: true
+  become: true
+  vars:
+    virtual_hosts:
+      - { name: "web1", port: 8080, document_root: "/var/www/web1" }
+      - { name: "db1", port: 9090, document_root: "/var/www/db1" }
+  tasks:
+    - name: Настройка виртуальных хостов
+      template:
+        src: vhost.j2
+        dest: /etc/apache2/sites-available/{{ item.name }}.conf
+      with_items: "{{ virtual_hosts }}"
+...
