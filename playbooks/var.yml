@@ -5,7 +5,7 @@
   vars:
     greeting: "you didn't specify a message"
   tasks:
-  - name: Output a message
-    debug:
-      msg: "{{ greeting }}"
+    - name: Output a message
+      debug:
+        msg: "{{ greeting }}"
 ...

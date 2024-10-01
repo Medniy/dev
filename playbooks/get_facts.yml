@@ -5,4 +5,4 @@
   tasks:
     - name: Показать информацию об ОС
       debug:
-        msg: "ОС: {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }}, Ядро: {{ ansible_facts['kernel'] }}"
+        msg: "{{ ansible_facts }}"

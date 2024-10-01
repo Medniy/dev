@@ -1,0 +1,17 @@
+- name: Настройка веб-сервера
+  hosts: webservers
+  become: true
+ 
+  tasks:
+    - name: Установка пакета Apache
+      apt:
+        name: apache2
+        state: present
+
+    - name: Конфигурация Apache
+      template:
+        src: apache.j2
+        dest: /etc/apache2/sites-available/000-default.conf
+    - name: Debug
+      debug:
+        msg: "{{ http_port }} {{ max_clients }}"
