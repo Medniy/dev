@@ -1,0 +1,14 @@
+---
+- name: Установка и настройка Nginx
+  hosts: webservers
+  become: true
+  vars_files:
+    - nginx_vars.yml
+  tasks:
+    - name: Установить Nginx
+      package:
+        name: nginx
+        state: present
+    - name: Показать переменные
+      debug:
+        var: server_name

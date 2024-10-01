@@ -1,0 +1,9 @@
+---
+- name: Example hostvars
+  hosts: production
+  gather_facts: true
+  tasks:
+    - name: Print vars
+      debug:
+        msg: "{{ hostvars.d2.ansible_all_ipv4_addresses }}"
+    

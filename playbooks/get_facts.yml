@@ -1,0 +1,8 @@
+---
+- name: Получение фактов
+  hosts: localhost
+  gather_facts: true
+  tasks:
+    - name: Показать информацию об ОС
+      debug:
+        msg: "ОС: {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }}, Ядро: {{ ansible_facts['kernel'] }}"
