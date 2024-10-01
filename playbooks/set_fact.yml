@@ -1,0 +1,16 @@
+---
+- name: Set nginx state
+  hosts: production
+  gather_facts: true
+  tasks:
+    - name: Read
+      debug: var=ansible_facts.services
+        
+    - name: Set
+      when: ansible_facts.services.nginx.state is defined
+      set_fact:
+        nginx_state: "{{ ansible_facts.services.nginx.state }}"
+    
+    - name: Read
+      debug: var=ansible_facts.services
+      

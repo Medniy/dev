@@ -1,0 +1,14 @@
+---
+- name: Show return value of command module
+  hosts: production
+  gather_facts: true
+  tasks:
+
+
+    - name: Print ansible_local
+      debug: var=ansible_local
+
+    - name: Print book title
+      debug: msg="The title of the book is {{ ansible_local.example.book.title }}"
+
+      ignore_errors: true
