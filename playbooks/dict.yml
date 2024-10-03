@@ -3,6 +3,8 @@
   hosts: production
   gather_facts: true
   become: true
+  vars_files:
+    - vars/external_vars.yml
   vars:
     virtual_hosts:
       - { name: "web1", port: 8080, document_root: "/var/www/web1" }

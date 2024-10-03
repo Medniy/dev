@@ -1,0 +1,19 @@
+
+PLAY [Example hostvars] ********************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [d1]
+ok: [d2]
+
+TASK [Print vars] **************************************************************
+ok: [d2] => 
+  msg:
+  - 10.130.0.34
+ok: [d1] => 
+  msg:
+  - 10.130.0.34
+
+PLAY RECAP *********************************************************************
+d1                         : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+d2                         : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

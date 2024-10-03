@@ -2,13 +2,10 @@
 - name: Show return value of command module
   hosts: production
   gather_facts: true
+  vars:
+    tmp: "Переменная в плейбуке"
   tasks:
-
-
-    - name: Print ansible_local
-      debug: var=ansible_local
-
-    - name: Print book title
-      debug: msg="The title of the book is {{ ansible_local.example.book.title }}"
-
+    - name: Print 
+      debug: 
+        msg: "{{ tmp }}"
       ignore_errors: true
