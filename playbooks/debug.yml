@@ -1,0 +1,12 @@
+---
+- name: Debug
+  hosts: production
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Install git
+      package:
+        name: git
+        state: present
+        update_cache: true
+...

@@ -1,0 +1,10 @@
+---
+- name: Проверка наличие интерфейса eth0
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: assert
+      assert:
+        that:
+          - ansible_eth0 is defined

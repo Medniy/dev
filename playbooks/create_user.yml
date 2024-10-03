@@ -1,0 +1,10 @@
+---
+- name: Create new user
+  hosts: production
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Creating
+      user:
+        name: ansible
+        create_home: yes

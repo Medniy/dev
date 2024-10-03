@@ -1,6 +1,7 @@
 ---
 - name: Установка и настройка Nginx
   hosts: webservers
+  debugger: always
   become: true
   vars_files:
     - nginx_vars.yml
