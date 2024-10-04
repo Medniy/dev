@@ -18,11 +18,14 @@
   
 
   tasks:
+   
     - name: Ensure nginx is installed
       package:
         name: nginx
         update_cache: true
       notify: Restart nginx
+      tags: 
+        - install
 
     - name: Проверка сертификата
       community.crypto.x509_certificate_info:
@@ -49,6 +52,7 @@
         path: "{{ tls_dir }}"
         state: directory
         mode: '0750'
+      tags: mkdir
       notify: Restart nginx
 
     - name: Copy TLS files
@@ -69,12 +73,15 @@
         dest: "{{ conf_file }}"
         mode: '0644'
       notify: Restart nginx
+      tags:
+        - config
 
     - name: Enable configuration
       file:
         src: /etc/nginx/sites-available/default
         dest: /etc/nginx/sites-enabled/default
         state: link
+      
 
     - name: Install home page
       template:
@@ -84,7 +91,9 @@
 
     - name: Restart nginx
       meta: flush_handlers
-
+      tags:
+        - restart
+      
     - name: "Test it! https://10.130.0.34:443/index.html"
       delegate_to: localhost
       become: false
