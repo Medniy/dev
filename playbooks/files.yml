@@ -1,0 +1,34 @@
+---
+- name: working with files
+  hosts: webservers
+  become: true
+  gather_facts: false
+  vars:
+    src_dir: name
+    dest_dir: /home/admuser/work
+    string: anything
+  
+
+  tasks:
+    - name: mkdir
+      file:
+        path: "{{ dest_dir }}"
+        state: directory
+        mode: '0755'
+      tags: mkdir
+
+    - name: copy
+      copy:
+        src: "{{ src_dir }}"
+        dest: "{{ dest_dir }}"
+        mode: '0755'
+    - debug:
+        msg: "{{ dest_dir + src_dir }}"
+
+    - name: Replace a localhost entry with our own
+      lineinfile:
+        path: "{{ dest_dir + '/' + src_dir }}"
+        regexp: '^something'
+        line: "{{ string }}"
+       
+...
