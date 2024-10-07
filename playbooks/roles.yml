@@ -1,0 +1,13 @@
+---
+- name: Настройка базы данных
+  hosts: db
+  roles:
+    - role: database
+      db_name: "mydb"
+
+- name: Настройка веб-сервера
+  become: true
+  hosts: webservers
+  roles:
+    - role: webserver
+      listen_port: 80
