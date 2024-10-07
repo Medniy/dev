@@ -1,0 +1,7 @@
+---
+postgres_packages:
+ - acl # для become_user: postgres
+ - libpq-dev
+ - postgresql12
+ - python3-psycopg2
+...
