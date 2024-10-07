@@ -6,21 +6,11 @@
     cache_valid_time: 3600
     pkg: "{{ postgres_packages }}"
 
-- name: Copy configuration file
-  become: true
-  template:
-    src: postgresql.conf.j2
-    dest: /etc/postgresql/12/main/postgresql.conf
-    owner: postgres
-    group: postgres
-    mode: '0644'
-  notify: Restart postgres
-
 - name: Copy client authentication configuration file
   become: true
   copy:
     src: pg_hba.conf
-    dest: /etc/postgresql/12/main/pg_hba.conf
+    dest: /etc/postgresql/16/main/pg_hba.conf
     owner: postgres
     group: postgres
     mode: '0640'

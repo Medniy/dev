@@ -1,6 +1,6 @@
 ---
 - name: Настройка базы данных
-  hosts: db
+  hosts: dbservers
   roles:
     - role: database
       db_name: "mydb"
