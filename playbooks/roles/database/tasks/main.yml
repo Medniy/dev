@@ -29,7 +29,7 @@
     password: "{{ db_pass }}"
 
 - name: Create the database
-  become: true
+  
   become_user: postgres
   postgresql_db:
     name: "{{ database_name }}"

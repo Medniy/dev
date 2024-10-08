@@ -4,4 +4,9 @@ postgres_packages:
  - libpq-dev
  - postgresql
  - python3-psycopg2
+
+locale: ru_RU.UTF-8
+database_user: postgres
+db_pass: postgres
+database_name: mydb
 ...
