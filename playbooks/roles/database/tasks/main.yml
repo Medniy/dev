@@ -18,8 +18,9 @@
 
 - name: Create project locale
   become: true
-  locale_gen:
+  community.general.locale_gen:
     name: "{{ locale }}"
+  notify: Restart postgres
 
 - name: Create a DB user
   become: true
@@ -28,8 +29,7 @@
     name: "{{ database_user }}"
     password: "{{ db_pass }}"
 
-- name: Create the database
-  
+- name: Create the database  
   become_user: postgres
   postgresql_db:
     name: "{{ database_name }}"
