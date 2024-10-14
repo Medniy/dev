@@ -3,3 +3,4 @@ max_clients: 100
 proj_path:  "{{ ansible_env.HOME }}/proj"
 venv_path: "{{ ansible_env.HOME }}/.virtualenvs"
 db_name: "myapp_db"
+ansible_python_interpreter: /usr/bin/python3
