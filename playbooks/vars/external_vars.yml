@@ -1,2 +1,5 @@
 http_port: 8080
 max_clients: 100
+proj_path:  "{{ ansible_env.HOME }}/proj"
+venv_path: "{{ ansible_env.HOME }}/.virtualenvs"
+db_name: "myapp_db"

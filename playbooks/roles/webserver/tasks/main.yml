@@ -81,3 +81,9 @@
   failed_when: "'Running on ' in this.content"
   tags:
     - test
+
+- name: Initialize the database
+  django_manage:
+    command: createdb --noinput --nodata
+    app_path: "{{ proj_path }}"
+    virtualenv: "{{ venv_path }}"

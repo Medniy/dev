@@ -1,0 +1,57 @@
+---
+- name: Configure django
+  hosts: webservers
+  become: true
+  vars_files:
+    - "vars/external_vars.yml"
+
+  tasks:
+    - name: Ensure Python is installed
+      package:
+        name: python3
+        state: present
+    
+    - name: Ensure pip and venv are installed
+      package:
+        name:
+          - python3-pip
+          - python3-venv
+          - libpq-dev
+        state: present
+    
+
+    - name: Проверка
+      debug:
+        msg: "{{ proj_path }}"
+
+    - name: Ensure PostgreSQL database is created
+      postgresql_db:
+        name: "{{ db_name }}"
+        state: present
+
+    - name: Create a virtual environment
+      command:
+        cmd: python3 -m venv {{ venv_path }}
+        creates:  "{{ venv_path }} /bin/activate"
+
+    - name: Install Django in virtual environment
+      pip:
+        name: 
+          - django
+          - psycopg2
+        virtualenv:  "{{ venv_path }}"
+        state: present     
+    
+
+
+    - name: Create a new Django project
+      ansible.builtin.command:
+        cmd: "{{ venv_path }}/bin/django-admin startproject myproject {{ proj_path }}"
+      args:
+        creates: "{{ proj_path }}/manage.py" 
+
+    - name: Initialize the database
+      django_manage:
+        command: createdb --noinput --nodata
+        app_path: "{{ proj_path }}"
+        virtualenv: "{{ venv_path }}"
