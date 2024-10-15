@@ -1,0 +1,13 @@
+---
+- name: loop
+  become: true
+  hosts: webservers
+  gather_facts: true
+  tasks:
+  - name: Create users
+    user:
+      name: "{{ item.name }}"
+      groups: "{{ item.groups }}"
+    loop:
+      - { name: 'alice', groups: 'users' }
+      - { name: 'bob', groups: 'users' }

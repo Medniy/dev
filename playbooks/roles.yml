@@ -1,7 +1,7 @@
 ---
 - name: Настройка базы данных
   become: true
-  hosts: dbservers
+  hosts: webservers
   roles:
     - role: database
       db_name: "{{ database_name }}"

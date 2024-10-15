@@ -13,6 +13,7 @@
     valid_at:
       point: "+30d"          
   register: result
+  ignore_errors: true
 
 - name: Создать новый самоподписанный сертификат
   openssl_certificate:
@@ -20,11 +21,8 @@
     privatekey_path: '{{ tls_dir + key_file }}'
     provider: selfsigned       
     state: present
-  when: not result.valid_at.point
+  ignore_errors: true
 
-- name: debug
-  debug:
-    msg: "{{ result.valid_at.point }}"
 
 - name: Create directories for TLS certificates
   file:
@@ -70,11 +68,11 @@
   tags:
     - restart
       
-- name: "Test it! https://10.130.0.34:443/index.html"
+- name: "Test it! https://34.31.27.38:443/index.html"
   delegate_to: localhost
   become: false
   uri:
-    url: 'https://10.130.0.34:443/index.html'
+    url: 'https://34.31.27.38:443/index.html'
     validate_certs: false
     return_content: true
   register: this
@@ -82,8 +80,3 @@
   tags:
     - test
 
-- name: Initialize the database
-  django_manage:
-    command: createdb --noinput --nodata
-    app_path: "{{ proj_path }}"
-    virtualenv: "{{ venv_path }}"

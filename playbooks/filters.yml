@@ -1,0 +1,14 @@
+---
+- name: фильтры
+  become: true
+  hosts: webservers
+  gather_facts: true
+  tasks:
+    - name: Check the structure of interfaces
+      debug:
+        var: ansible_facts
+
+    - name: Display interface information
+      debug:
+        msg: "Interface {{ item.key }} has IP {{ item.value.ansible_default_ipv4.address }}"
+      with_dict: "{{ ansible_facts.interfaces }}"

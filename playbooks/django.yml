@@ -24,10 +24,7 @@
       debug:
         msg: "{{ proj_path }}"
 
-    - name: Ensure PostgreSQL database is created
-      postgresql_db:
-        name: "{{ db_name }}"
-        state: present
+    
 
     - name: Create a virtual environment
       command:
@@ -40,8 +37,8 @@
           - django
           - psycopg2
         virtualenv:  "{{ venv_path }}"
-        state: present     
-    
+        state: present
+      when: venv_path is defined          
 
 
     - name: Create a new Django project
@@ -49,9 +46,26 @@
         cmd: "{{ venv_path }}/bin/django-admin startproject myproject {{ proj_path }}"
       args:
         creates: "{{ proj_path }}/manage.py" 
+    
+
 
     - name: Initialize the database
+      postgresql_db:
+        name: "{{ db_name }}"
+        state: present
+        login_user: postgres
+        login_password: postgres
+        host: 127.0.0.1
+        port: 5432
+       
+    - name: Apply Django migrations
       django_manage:
-        command: createdb --noinput --nodata
+        command: migrate
         app_path: "{{ proj_path }}"
         virtualenv: "{{ venv_path }}"
+      register: result
+      changed_when: '"Creating tables" in result.out|default("")'
+
+    - name: Проверка 2
+      debug:
+        msg: "{{ result }}"
