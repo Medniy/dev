@@ -1,0 +1,46 @@
+---
+- name: Операции на хостах staging и database
+  hosts: webservers:dbservers
+  serial: 50%
+  become: true
+  gather_facts: false
+
+  vars:
+    tls_dir: /etc/nginx/ssl/
+    key_file: nginx.key
+    cert_file: nginx.crt
+    conf_file: /etc/nginx/sites-available/default
+    server_name: localhost
+    
+  handlers:
+    - name: Перезапуск Nginx
+      service:
+        name: nginx
+        state: restarted
+
+  tasks:
+    - name: Пинг всех хостов
+      ping:
+
+    - name: Download goss binary
+      delegate_to: localhost
+      get_url:
+        url: "https://github.com/Medniy/dev/blob/main/playbooks/roles/database/tasks/main.yml"
+        dest: "~/"
+
+    - name: Upgrade system packages    
+      apt:
+        update_cache: true
+        upgrade: dist
+     
+
+    - name: Выполнить миграцию базы данных
+      command: "/sbin/ip a"
+      run_once: true
+    
+    - name: Настройка Nginx
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+      notify: Перезапуск Nginx
+
