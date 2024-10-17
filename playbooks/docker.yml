@@ -1,0 +1,37 @@
+---
+- name: Create image docker
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+  - name: Read current version
+    command: cat ./version.txt
+    register: version_output
+
+  - name: Increment version
+    set_fact:
+      new_version: "{{ version_output.stdout | int + 1 }}"
+
+  - name: Update version file
+    copy:
+      content: "{{ new_version }}"
+      dest: ./version.txt
+
+  - name: Create Nginx image
+    docker_image:
+      build:
+        path: ./nginx
+      source: build
+      name: medniy/dev
+      state: present
+      force_source: "{{ force_source | default(false) }}"
+      tag:  "{{ new_version }}"
+
+  - name: Push image up
+    docker_image:
+      name: "medniy/dev:{{ new_version }}"
+      push: true
+      source: local
+      state: present
+    tags:
+      - push
