@@ -1,0 +1,20 @@
+- name: Provision database machine
+  hosts: mysql
+  become: true
+  gather_facts: false
+  tasks:
+
+    - name: Install packages for mysql
+      apt:
+        update_cache: true
+        cache_valid_time: 3600
+        name:
+          - mysql-server
+          - python3-pip
+        state: present
+
+    - name: Install requirements
+      pip:
+        name: PyMySQL
+        state: present
+        executable: /usr/bin/pip3

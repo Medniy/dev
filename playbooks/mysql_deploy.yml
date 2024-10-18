@@ -1,0 +1,34 @@
+- name: Deploy database
+  hosts: mysql
+  become: true
+  gather_facts: false
+
+  handlers:
+    - name: Restart Mysql
+      systemd:
+        name: mysql
+        state: restarted
+  tasks:
+
+    - name: Listen
+      lineinfile:
+        path: /etc/mysql/mysql.conf.d/mysqld.cnf
+        regexp: '^bind-address'
+        line: 'bind-address = 0.0.0.0'
+        state: present
+      notify: Restart Mysql
+
+    - name: Create database
+      mysql_db:
+        name: "{{ database_name }}"
+        state: present
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+
+    - name: Create database user
+      mysql_user:
+        name: "{{ database_user }}"
+        password: "{{ database_password }}"
+        priv: '{{ database_name }}.*:ALL'
+        host: '%'
+        state: present
+        login_unix_socket: /var/run/mysqld/mysqld.sock
