@@ -1,11 +1,11 @@
 - name: Deploy Ghost
   hosts: ghost
   become: true
-  gather_facts: false
+  gather_facts: true
   
   vars:
     url: "https://{{ inventory_hostname }}"
-    database_host: "{{ groups['database'][0] }}"
+    database_host: "db1"
     data_dir: /data/ghostdata
     certs_dir: /data/certs
     net_name: ghostnet
@@ -14,3 +14,32 @@
     - name: Create network
       docker_network:
         name: "{{ net_name }}"
+
+    - name: debug
+      debug:
+        msg: "{{ hostvars }}"
+
+    - name: Create ghostdata directory
+      file:
+        path: "{{ data_dir }}"
+        state: directory
+        mode: '0750'
+
+    - name: Start ghost container
+      docker_container:
+        name: ghost
+        image: ghost
+        container_default_behavior: compatibility
+        network_mode: host
+        networks:
+          - name: "{{ net_name }}"
+        volumes:
+          - "{{ data_dir }}:/var/lib/ghost/content"
+        env:
+          database__client: mysql
+          database__connection__host: "{{ database_host }}"
+          database__connection__user: "{{ database_user }}"
+          database__connection__password: "{{ database_password }}"
+          database__connection__database: "{{ database_name }}"
+          url: "https://{{ inventory_hostname }}"
+          NODE_ENV: production
