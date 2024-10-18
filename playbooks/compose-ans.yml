@@ -1,0 +1,31 @@
+- name: Run Ghost locally
+  hosts: localhost
+  gather_facts: false
+  tasks:
+  
+    - name: Create Nginx image
+      docker_image:
+        build:
+          path: ./nginx
+        source: build
+        name: medniy/dev
+        state: present
+        force_source: "{{ force_source | default(false) }}"
+        tag: "{{ tag | default('v1') }}"
+
+    - name: Create certs
+      command: >
+        openssl req -new -x509 -nodes
+        -out certs/nginx.crt -keyout certs/nginx.key
+        -subj '/CN=localhost' -days 365
+      args:
+        creates: files/nginx.crt
+
+    - name: Bring up services
+      docker_compose:
+        project_src: ./nginx
+        state: present
+
+    - name: Create network
+      docker_network:
+        name: ghostnet
