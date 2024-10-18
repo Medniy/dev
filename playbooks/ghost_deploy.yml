@@ -15,9 +15,7 @@
       docker_network:
         name: "{{ net_name }}"
 
-    - name: debug
-      debug:
-        msg: "{{ hostvars }}"
+ 
 
     - name: Create ghostdata directory
       file:
@@ -30,7 +28,7 @@
         name: ghost
         image: ghost
         container_default_behavior: compatibility
-        network_mode: host
+        network_mode: bridge
         networks:
           - name: "{{ net_name }}"
         volumes:
