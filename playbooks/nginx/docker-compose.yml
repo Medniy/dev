@@ -5,11 +5,14 @@ services:
     depends_on:
       - db
     ports:
-      - "8080:80"
+      - "8080"
+      
     volumes:
       - web_data:/usr/share/nginx/html
     networks:
       - app_net
+    deploy:
+      replicas: 2    # Масштабируем сервис на два контейнера
   db:
     image: mysql
     environment:

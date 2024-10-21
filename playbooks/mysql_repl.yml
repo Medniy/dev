@@ -1,0 +1,75 @@
+---
+- name: Set up MySQL Master-Slave replication
+  hosts: localhost
+  become: true
+  gather_facts: false
+  tasks:
+
+    - name: Create a directory for MySQL data
+      file:
+        path: /opt/mysql
+        state: directory
+
+    - name: Create Docker network for MySQL
+      docker_network:
+        name: mysql_net
+
+  
+
+    - name: Start MySQL master container
+      docker_container:
+        name: db_master
+        image: mysql:5.7
+        state: started  # Убедитесь, что состояние указано
+        env:  # Используйте правильный синтаксис для окружения
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_DATABASE: mydatabase
+        volumes:
+          - db_master_data:/var/lib/mysql
+        networks:
+          - mysql_net
+        restart_policy: always
+
+    - name: Wait for MySQL master to be ready
+      wait_for:
+        port: 3306
+        delay: 10
+        timeout: 60
+
+    - name: Create replication user on master
+      mysql_user:
+        name: replicator
+        password: replicator_password
+        priv: '*.*:REPLICATION SLAVE'
+        host: '%'
+        state: present
+      delegate_to: db_master
+
+    - name: Get master status
+      mysql_query:
+        login_user: root
+        login_password: rootpassword
+        query: "SHOW MASTER STATUS"
+      register: master_status
+      delegate_to: db_master
+
+    - name: Set up slave to replicate from master
+      mysql_query:
+        login_user: root
+        login_password: rootpassword
+        query: >
+          CHANGE MASTER TO
+          MASTER_HOST='db_master',
+          MASTER_USER='replicator',
+          MASTER_PASSWORD='replicator_password',
+          MASTER_LOG_FILE='{{ master_status.query[0].File }}',
+          MASTER_LOG_POS={{ master_status.query[0].Position }};
+      delegate_to: db_slave
+
+    - name: Start slave replication
+      mysql_query:
+        login_user: root
+        login_password: rootpassword
+        query: "START SLAVE;"
+      delegate_to: db_slave
+
