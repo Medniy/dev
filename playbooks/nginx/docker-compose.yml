@@ -1,13 +1,27 @@
 version: '3'
 services:
-  nginx:
+  web:
     image: medniy/dev:9
+    depends_on:
+      - db
     ports:
-      - "8000:80"
-      - "8443:443"
+      - "8080:80"
     volumes:
-      - ${PWD}/certs:/certs
-    links:
-      - ghost
-  ghost:
-    image: ghost
+      - web_data:/usr/share/nginx/html
+    networks:
+      - app_net
+  db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app_net
+
+volumes:
+  web_data:
+  db_data:
+
+networks:
+  app_net:

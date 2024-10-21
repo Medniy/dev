@@ -1,4 +1,4 @@
-- name: Run Ghost locally
+- name: Run  locally
   hosts: localhost
   gather_facts: false
   tasks:
@@ -21,6 +21,8 @@
       args:
         creates: files/nginx.crt
 
+    
+
     - name: Bring up services
       docker_compose:
         project_src: ./nginx
@@ -28,4 +30,4 @@
 
     - name: Create network
       docker_network:
-        name: ghostnet
+        name: app_net

@@ -1,0 +1,9 @@
+- name: Run  locally
+  hosts: localhost
+  gather_facts: false
+  tasks:
+
+    - name: Bring up services with Docker Compose
+      docker_compose:
+        project_src: /home/ubuntu/ansible/playbooks/nginx/
+        state: present
