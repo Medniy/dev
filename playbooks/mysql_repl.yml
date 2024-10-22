@@ -21,9 +21,7 @@
         name: db_master
         image: mysql:5.7
         state: started  # Убедитесь, что состояние указано
-        env:  # Используйте правильный синтаксис для окружения
-          MYSQL_ROOT_PASSWORD: rootpassword
-          MYSQL_DATABASE: mydatabase
+      
         volumes:
           - db_master_data:/var/lib/mysql
         networks:

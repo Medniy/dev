@@ -1,0 +1,13 @@
+---
+- name: check env
+  hosts: webservers
+  become: true
+  gather_facts: false
+  tasks:
+  - name: Выполнить printenv
+    shell: journalctl -xeu nginx.service
+    register: env_vars
+
+  - name: Вывести переменную 
+    debug:
+      msg: "Переменная : {{ env_vars.stdout_lines  }}"

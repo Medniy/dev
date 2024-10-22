@@ -24,3 +24,7 @@ db1 ansible_host=10.128.0.5
 
 [ghost]
 web1 ansible_host=10.128.0.6
+
+[web_dock]
+web1_dock ansible_host=172.18.0.2
+web2_dock ansible_host=172.18.0.3
