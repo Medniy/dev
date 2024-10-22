@@ -1,0 +1,24 @@
+- name: Scale web service and setup load balancing
+  hosts: localhost
+  gather_facts: false
+  tasks:    
+
+    - name: Bring up services with Docker Compose
+      docker_compose:
+        project_src: ./
+        state: present       
+        scale:
+          web: 2        
+      become: true
+
+    - name: "Test it! http://localhost/index.html"
+      delegate_to: localhost
+      become: false
+      uri:
+        url: 'http://localhost/index.html'
+        validate_certs: false
+        return_content: true
+      register: this
+      failed_when: "'Running on ' in this.content"
+      tags:
+        - test  
