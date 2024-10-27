@@ -1,14 +1,31 @@
 - name: Scale web service and setup load balancing
   hosts: localhost
   gather_facts: false
-  tasks:    
+  tasks:
+
+    - name: Create Nginx image
+      docker_image:
+        build:
+          path: ./
+        source: build
+        name: medniy/dev
+        state: present
+        force_source: "{{ force_source | default(false) }}"
+      tags: build 
+
+    - name: Push image up
+      docker_image:
+        name: "medniy/dev"
+        push: true
+        source: local
+        state: present
+      tags: push
 
     - name: Bring up services with Docker Compose
       docker_compose:
         project_src: ./
         state: present       
-        scale:
-          web: 2        
+             
       become: true
 
     - name: "Test it! http://localhost/index.html"

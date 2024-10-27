@@ -1,13 +1,22 @@
 version: '3'
 services:
-  web:
+  web1:
     image: nginx
     ports:
-      - "8080"
+      - "8080:80"
     volumes:
       - web_data:/usr/share/nginx/html
     networks:
       - app_net
+
+  web2:
+    image: nginx
+    ports:
+      - "8081:80"
+    volumes:
+      - web_data:/usr/share/nginx/html
+    networks:
+      - app_net      
 
 volumes:
   web_data:
