@@ -8,6 +8,8 @@
         state: info
       register: cert_info
 
+      
+
     - name: Проверка даты окончания
       debug:
         msg: "Срок действия сертификата истекает {{ cert_info.not_after }}"
