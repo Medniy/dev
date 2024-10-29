@@ -1,0 +1,38 @@
+
+services:
+  db_master:
+    image: container-registry.oracle.com/mysql/community-cluster
+    container_name: db_master
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: example_db
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: password
+    volumes:
+      - db_master_data:/var/lib/mysql
+    networks:
+      - db_cluster
+    command: --server-id=1 --log-bin='mysql-bin --user=mysql'
+
+  db_slave:
+    image: container-registry.oracle.com/mysql/community-cluster
+    container_name: db_slave
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_REPLICATION_MODE: slave
+      MYSQL_MASTER_HOST: db_master
+      MYSQL_MASTER_ROOT_PASSWORD: rootpassword
+      MYSQL_REPLICATION_USER: repl_user
+      MYSQL_REPLICATION_PASSWORD: repl_password
+    volumes:
+      - db_slave_data:/var/lib/mysql
+    networks:
+      - db_cluster
+    command: --server-id=2 --relay-log='mysql-relay-bin --user=mysql'
+
+volumes:
+  db_master_data:
+  db_slave_data:
+
+networks:
+  db_cluster:
