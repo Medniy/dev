@@ -1,0 +1,11 @@
+- name: Deploy MySQL Cluster with Master-Slave Replication
+  hosts: localhost
+  gather_facts: false
+  tasks:
+  
+
+    - name: Deploy MySQL master-slave setup
+      docker_compose:
+        project_src: /home/ubuntu/ansible/playbooks/16
+        state: present
+      become: true

@@ -1,0 +1,9 @@
+- name: Scale web service and setup load balancing
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Check replication status on MySQL slave
+      shell: docker exec -it db_slave mysql -uroot -prootpassword -e "SHOW SLAVE STATUS\G;"
+      register: slave_status
+    - debug:
+        var: slave_status.stdout_lines
