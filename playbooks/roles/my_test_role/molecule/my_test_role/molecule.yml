@@ -1,0 +1,39 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+platforms:
+  - name: nginx
+    image: nginx
+    privileged: true    
+    docker_networks:
+      - name: 'public_net'
+      - name: 'private_net'
+    ipam_config:
+      - subnet: '10.16.0.0/24'
+    networks:
+      - name: 'public_net'
+      - name: 'private_net'
+    ipv4_address: '10.16.0.10'
+
+  - name: MySQL
+    image: mysql
+    privileged: true   
+    docker_networks:
+      - name: 'private_net'
+    ipam_config:
+      - subnet: '10.17.0.0/24'
+    networks:
+      - name: "private_net"
+    ipv4_address: '10.17.0.10'
+
+ 
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
