@@ -1,0 +1,4 @@
+---
+nginx_port: 8083
+mysql_root_password: rootpassword
+# vars file for my_role
