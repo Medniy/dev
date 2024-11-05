@@ -1,8 +1,27 @@
 ---
-- name: Converge
+- name: Configure Redis cluster
   hosts: all
-  gather_facts: false
+  become: true
+  gather_facts: true
   tasks:
-    - name: Replace this task with one that validates your content
-      ansible.builtin.debug:
-        msg: "This is the effective test"
+    - name: Configure master Redis instance
+      when: inventory_hostname == "redis_master"
+      community.general.ini_file:
+        path: /usr/local/etc/redis/redis.conf
+        section: "Replication"
+        option: "replication-mode"
+        value: "master"
+
+    - name: Configure slave Redis instance
+      when: inventory_hostname in ["redis_slave1", "redis_slave2"]
+      community.general.ini_file:
+        path: /usr/local/etc/redis/redis.conf
+        section: "Replication"
+        option: "replication-mode"
+        value: "slave"
+      
+    - name: Connect slaves to master
+      when: inventory_hostname in ["redis_slave1", "redis_slave2"]
+      ansible.builtin.command: >
+        redis-cli -h {{ hostvars['redis_master']['ansible_host'] }} -p 6379
+        SLAVEOF {{ hostvars['redis_master']['ansible_host'] }} 6379
