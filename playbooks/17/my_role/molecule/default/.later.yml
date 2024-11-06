@@ -1,0 +1,5 @@
+ansible:
+  custom_modules: []
+  literal-bools:
+    - "true"
+    - "false"
