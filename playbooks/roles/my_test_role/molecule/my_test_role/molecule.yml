@@ -8,39 +8,20 @@ lint: |
   yamllint .
   ansible-lint
 platforms:
-  - name: redis_master
-    image: "redis:6.2"
+  - name: debian
+    image: debian
     privileged: true
-    command: "redis-server --appendonly yes"    
     docker_networks:
-      - name: 'public_net'     
+      - name: 'public_net'
     ipam_config:
       - subnet: '10.16.0.0/24'
     networks:
-      - name: 'public_net'    
+      - name: 'public_net'
     ipv4_address: '10.16.0.10'
-    environment:
-      - REDIS_ROLE=master
 
-  - name: redis_slave1
-    image: "redis:6.2"
+  - name: ubuntu
+    image: ubuntu
     privileged: true
-    command: "redis-server --appendonly yes"   
-    docker_networks:
-      - name: 'private_net'
-    ipam_config:
-      - subnet: '10.16.0.0/24'
-    networks:
-      - name: "private_net"
-    ipv4_address: '10.16.0.11'
-    environment:
-      - REDIS_ROLE=slave
-      - REDIS_MASTER_HOST=redis_master
-  
-  - name: redis_slave2
-    image: "redis:6.2"
-    privileged: true
-    command: "redis-server --appendonly yes"      
     docker_networks:
       - name: 'private_net'
     ipam_config:
@@ -48,12 +29,10 @@ platforms:
     networks:
       - name: "private_net"
     ipv4_address: '10.16.0.12'
-    environment:
-      - REDIS_ROLE=slave
-      - REDIS_MASTER_HOST=redis_master
 
- 
 provisioner:
   name: ansible
+  playbooks:
+    converge: tasks/main.yml
 verifier:
   name: ansible

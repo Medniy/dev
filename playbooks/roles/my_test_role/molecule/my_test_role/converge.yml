@@ -19,7 +19,7 @@
         section: "Replication"
         option: "replication-mode"
         value: "slave"
-      
+        
     - name: Connect slaves to master
       when: inventory_hostname in ["redis_slave1", "redis_slave2"]
       ansible.builtin.command: >
