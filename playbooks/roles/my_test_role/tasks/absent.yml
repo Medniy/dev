@@ -1,0 +1,3 @@
+apt:
+  name: curl
+  state: absent

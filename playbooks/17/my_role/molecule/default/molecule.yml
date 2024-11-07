@@ -10,7 +10,7 @@ platforms:
 provisioner:
   name: ansible
   playbooks:
-    converge: converge.yml
+    converge: my_role.yml
 
 verifier:
   name: ansible
