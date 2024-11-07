@@ -1,0 +1,50 @@
+---
+- name: Verification of Ansible role execution
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    
+
+    - name: Check if required package is installed
+      package_facts:
+
+    - name: Verify that nginx is installed
+      assert:
+        that:
+          - "'nginx' in ansible_facts.packages"
+        fail_msg: "Nginx is not installed."
+
+    - name: Gather service facts
+      service_facts:
+
+    - name: Verify that nginx service is running
+      assert:
+        that:
+          - "ansible_facts.services['nginx'].state == 'running'"
+        fail_msg: "Nginx service is not running as expected."
+
+    - name: Check if a web endpoint is reachable
+      uri:
+        url: http://localhost
+        status_code: 200
+      register: web_response
+
+    - name: Verify web response status code
+      assert:
+        that:
+          - "web_response.status == 200"
+        fail_msg: "Web service did not return expected HTTP 200 status."
+
+    - name: Verify idempotency of the role
+      command: molecule idempotence
+      register: idempotence_result
+      changed_when: false
+      failed_when: "'changed=1' in idempotence_result.stdout"
+      ignore_errors: no
+
+    - name: Assert idempotence success
+      assert:
+        that:
+          - "'changed=0' in idempotence_result.stdout"
+        fail_msg: "Role is not idempotent. Re-running the role made changes."
