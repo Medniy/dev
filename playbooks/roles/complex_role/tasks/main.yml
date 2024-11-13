@@ -1,7 +1,8 @@
 ---
 # tasks file for complex_role
-- name: include task Mysql
-  include_tasks: mysql.yml
+- name: Rnclude task Mysql
+  ansible.builtin.include_tasks: mysql.yml
 
-- name: include task Nginx
-  include_tasks: nginx.yml   
+- name: Rnclude task Nginx
+  ansible.builtin.include_tasks: nginx.yml
+...

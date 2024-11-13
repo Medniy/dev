@@ -1,19 +1,19 @@
 - name: Install packages for mysql
-  apt:
-    update_cache: true     
+  ansible.builtin.apt:
+    update_cache: true
     name:
       - mysql-server
       - python3-pip
     state: present
 
 - name: Install requirements
-  pip:
+  ansible.builtin.pip:
     name: PyMySQL
     state: present
     executable: /usr/bin/pip3
 
 - name: Listen
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/mysql/mysql.conf.d/mysqld.cnf
     regexp: '^bind-address'
     line: 'bind-address = 0.0.0.0'
@@ -34,3 +34,4 @@
     host: '%'
     state: present
     login_unix_socket: /var/run/mysqld/mysqld.sock
+...

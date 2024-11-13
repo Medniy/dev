@@ -1,5 +1,5 @@
 - name: Ensure nginx is installed
-  package:
+  ansible.builtin.package:
     name: nginx
     update_cache: true
   notify: restart_nginx
@@ -8,44 +8,45 @@
   openssl_certificate:
     path: '{{ tls_dir + cert_file }}'
     privatekey_path: '{{ tls_dir + key_file }}'
-    provider: selfsigned       
+    provider: selfsigned
     state: present
-  
+
 - name: Create directories for TLS certificates
-  file:
+  ansible.builtin.file:
     path: "{{ tls_dir }}"
     state: directory
-    mode: '0750'      
+    mode: '0750'
   notify: restart_nginx
 
 - name: Copy TLS files
-  copy:
+  ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ tls_dir }}"
     mode: '0600'
   loop:
     - "{{ key_file }}"
     - "{{ cert_file }}"
-  notify: restart_nginx 
+  notify: restart_nginx
 
 - name: Manage nginx config template
-  template:
+  ansible.builtin.template:
     src: nginx.conf.j2
     dest: "{{ conf_file }}"
     mode: '0644'
   notify: restart_nginx
 
 - name: Enable configuration
-  file:
+  ansible.builtin.file:
     src: /etc/nginx/sites-available/default
     dest: /etc/nginx/sites-enabled/default
-    state: link      
+    state: link
 
 - name: Install home page
-  template:
+  ansible.builtin.template:
     src: index.html.j2
     dest: /usr/share/nginx/html/index.html
     mode: '0644'
 
-- name: restart_nginx
-  meta: flush_handlers
+- name: Restart_nginx
+  ansible.builtin.meta: flush_handlers
+...

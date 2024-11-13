@@ -1,13 +1,13 @@
 ---
 # defaults file for complex_role
-#mysql vars
-database_user: user
-database_password: pass
-database_name: db
+# mysql vars
+complex_role_database_user: user
+complex_role_database_password: pass
+complex_role_database_name: db
 
-#nginx vars
-tls_dir: /etc/nginx/ssl/
-key_file: nginx.key
-cert_file: nginx.crt
-conf_file: /etc/nginx/sites-available/default
-server_name: localhost
+# nginx vars
+complex_role_tls_dir: /etc/nginx/ssl/
+complex_role_key_file: nginx.key
+complex_role_cert_file: nginx.crt
+complex_role_conf_file: /etc/nginx/sites-available/default
+complex_role_server_name: localhost
