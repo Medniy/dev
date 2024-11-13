@@ -26,8 +26,9 @@
   meta: flush_handlers
 
 - name: Check MySQL service start
-  ansible.builtin.shell: /etc/init.d/mysql start 
-
+  ansible.builtin.shell: service mysql status || /etc/init.d/mysql start
+  changed_when: false
+  failed_when: false
 
 - name: Create database
   community.mysql.mysql_db:
