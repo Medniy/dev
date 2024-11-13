@@ -1,12 +1,12 @@
 ---
 # handlers file for complex_role
 - name: Restart_mysql
-  ansible.builtin.systemd:
+  ansible.builtin.service:
     name: mysql
     state: restarted
 
 - name: Restart_nginx
-  ansible.builtin.systemd:
+  ansible.builtin.service:
     name: nginx
     state: restarted
 ...

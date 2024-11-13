@@ -11,3 +11,4 @@ complex_role_key_file: nginx.key
 complex_role_cert_file: nginx.crt
 complex_role_conf_file: /etc/nginx/sites-available/default
 complex_role_server_name: localhost
+...

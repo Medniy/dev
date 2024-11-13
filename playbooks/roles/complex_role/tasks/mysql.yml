@@ -1,8 +1,10 @@
+---
 - name: Install packages for mysql
   ansible.builtin.apt:
     update_cache: true
     name:
       - mysql-server
+      - mysql-client
       - python3-pip
     state: present
 
@@ -18,19 +20,26 @@
     regexp: '^bind-address'
     line: 'bind-address = 0.0.0.0'
     state: present
-  notify: restart
+  notify: Restart_mysql
+
+- name: Immediately execute the handler
+  meta: flush_handlers
+
+- name: Check MySQL service start
+  ansible.builtin.shell: /etc/init.d/mysql start 
+
 
 - name: Create database
-  mysql_db:
-    name: "{{ database_name }}"
+  community.mysql.mysql_db:
+    name: "{{ complex_role_database_name }}"
     state: present
     login_unix_socket: /var/run/mysqld/mysqld.sock
 
 - name: Create database user
-  mysql_user:
-    name: "{{ database_user }}"
-    password: "{{ database_password }}"
-    priv: '{{ database_name }}.*:ALL'
+  community.mysql.mysql_user:
+    name: "{{ complex_role_database_user }}"
+    password: "{{ complex_role_database_password }}"
+    priv: '{{ complex_role_database_name }}.*:ALL'
     host: '%'
     state: present
     login_unix_socket: /var/run/mysqld/mysqld.sock

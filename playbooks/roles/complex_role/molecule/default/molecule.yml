@@ -3,9 +3,10 @@ driver:
   name: docker
 
 platforms:
-  - name: instance
-    image: "ubuntu:20.04"
-    pre_build_image: true
+  - name: ubuntu
+    image: "ubuntu:20.04"    
+    dockerfile: ../dockerfile  # Указываем путь к кастомному Dockerfile
+    
 
 provisioner:
   name: ansible
@@ -20,3 +21,4 @@ lint: |
   yamllint .
   ansible-lint
   ansible-later
+...

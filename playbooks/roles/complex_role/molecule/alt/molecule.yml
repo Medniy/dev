@@ -3,7 +3,7 @@ driver:
   name: docker
 
 platforms:
-  - name: instance
+  - name: altlinux
     image: "altlinux"
     pre_build_image: true
 
@@ -20,3 +20,4 @@ lint: |
   yamllint .
   ansible-lint
   ansible-later
+...
