@@ -1,0 +1,11 @@
+---
+# handlers file for complex_role
+- name: restart_mysql
+  systemd:
+    name: mysql
+    state: restarted
+
+- name: restart_nginx
+  systemd:
+    name: nginx
+    state: restarted  

@@ -1,0 +1,36 @@
+- name: Install packages for mysql
+  apt:
+    update_cache: true     
+    name:
+      - mysql-server
+      - python3-pip
+    state: present
+
+- name: Install requirements
+  pip:
+    name: PyMySQL
+    state: present
+    executable: /usr/bin/pip3
+
+- name: Listen
+  lineinfile:
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: '^bind-address'
+    line: 'bind-address = 0.0.0.0'
+    state: present
+  notify: restart
+
+- name: Create database
+  mysql_db:
+    name: "{{ database_name }}"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Create database user
+  mysql_user:
+    name: "{{ database_user }}"
+    password: "{{ database_password }}"
+    priv: '{{ database_name }}.*:ALL'
+    host: '%'
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock

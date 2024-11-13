@@ -1,0 +1,7 @@
+- name: complex role
+  become: true
+  gather_facts: false
+  hosts: webservers
+
+  roles:
+  - complex_role
