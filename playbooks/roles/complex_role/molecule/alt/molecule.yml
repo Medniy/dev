@@ -3,12 +3,18 @@ driver:
   name: docker
 
 platforms:
-  - name: altlinux
-    image: "altlinux"
-    pre_build_image: true
+  - name: archlinux
+    image: "archlinux"
+    privileged: true
+    command: /sbin/init
+    dockerfile: ../dockerfile  # Указываем путь к кастомному Dockerfile
 
 provisioner:
   name: ansible
+  inventory:
+    group_vars:
+      all:
+        ansible_python_interpreter: /usr/bin/python
   playbooks:
     converge: converge.yml
 
