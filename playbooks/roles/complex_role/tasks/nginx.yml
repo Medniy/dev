@@ -12,29 +12,17 @@
       notify: Restart_nginx   
 
     - name: Create Python virtual environment
-      ansible.builtin.command:
-        cmd: "python3 -m venv /opt/venv"
-      args:
-        creates: /opt/venv 
-
-    - name: Upgrade pip in virtual environment
-      ansible.builtin.command:
-        cmd: "/opt/venv/bin/pip install --upgrade pip"
-      changed_when: false
-
-    - name: Install cryptography library in virtual environment
-      ansible.builtin.command:
-        cmd: "/opt/venv/bin/pip install cryptography"
-      changed_when: false
+      ansible.builtin.pip:
+        name: cryptography
+        virtualenv: "/opt/venv"
+        virtualenv_command: "{{ ansible_python_interpreter }} -m venv /opt/venv"  
   when: ansible_facts['os_family'] == 'Debian'
-
 
 - name: Ensure cryptography library is installed and up-to-date
   ansible.builtin.pip:
     name: cryptography
     state: latest
   when: ansible_facts['os_family'] == 'Ubuntu'
-
 
 - name: Create directories for TLS certificates
   ansible.builtin.file:
