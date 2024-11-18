@@ -3,10 +3,9 @@ driver:
   name: docker
 
 platforms:
-  - name: archlinux
-    image: "archlinux"
-    privileged: true
-    command: /sbin/init
+  - name: debian
+    image: "debian"
+    privileged: true    
     dockerfile: ../dockerfile  # Указываем путь к кастомному Dockerfile
 
 provisioner:
@@ -14,7 +13,7 @@ provisioner:
   inventory:
     group_vars:
       all:
-        ansible_python_interpreter: /usr/bin/python
+        ansible_python_interpreter: /usr/bin/python3
   playbooks:
     converge: converge.yml
 

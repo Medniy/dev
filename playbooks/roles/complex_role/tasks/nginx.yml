@@ -1,19 +1,40 @@
 ---
-- name: Ensure nginx is installed
-  ansible.builtin.package:
-    name: nginx
-    update_cache: true
-  notify: Restart_nginx
+- name: Install nginx
+  block:
+    - name: Ensure nginx is installed
+      ansible.builtin.package:
+        name: 
+          - nginx
+          - python3-pip
+          - python3-venv
+          - python3-cryptography
+        update_cache: true
+      notify: Restart_nginx   
 
-- name: Ensure Python package manager is installed
-  ansible.builtin.package:
-    name: python3-pip
-    state: present
+    - name: Create Python virtual environment
+      ansible.builtin.command:
+        cmd: "python3 -m venv /opt/venv"
+      args:
+        creates: /opt/venv 
+
+    - name: Upgrade pip in virtual environment
+      ansible.builtin.command:
+        cmd: "/opt/venv/bin/pip install --upgrade pip"
+      changed_when: false
+
+    - name: Install cryptography library in virtual environment
+      ansible.builtin.command:
+        cmd: "/opt/venv/bin/pip install cryptography"
+      changed_when: false
+  when: ansible_facts['os_family'] == 'Debian'
+
 
 - name: Ensure cryptography library is installed and up-to-date
   ansible.builtin.pip:
     name: cryptography
     state: latest
+  when: ansible_facts['os_family'] == 'Ubuntu'
+
 
 - name: Create directories for TLS certificates
   ansible.builtin.file:
