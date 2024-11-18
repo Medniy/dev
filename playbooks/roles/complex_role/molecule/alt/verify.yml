@@ -1,0 +1,29 @@
+---
+- name: Verify Ansible role execution
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    # Проверка наличия установленного пакета
+    - name: Ensure nginx package is installed
+      package_facts:
+
+    - name: Verify nginx package installation
+      assert:
+        that:
+          - "'nginx' in ansible_facts.packages"
+        fail_msg: "Nginx package is not installed on the system."
+
+    # Проверка состояния сервиса
+    - name: Gather service facts
+      service_facts:
+
+    - name: debug
+      debug:
+        var: 'ansible_facts'
+
+    - name: Verify nginx service is running and enabled
+      assert:
+        that:
+          - "ansible_facts.services.nginx.state == 'running'"    
+
