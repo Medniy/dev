@@ -15,7 +15,7 @@
       ansible.builtin.pip:
         name: cryptography
         virtualenv: "/opt/venv"
-        virtualenv_command: "{{ ansible_python_interpreter }} -m venv /opt/venv"  
+        virtualenv_command: "python3 -m venv /opt/venv"  
   when: ansible_facts['os_family'] == 'Debian'
 
 - name: Ensure cryptography library is installed and up-to-date

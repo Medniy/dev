@@ -14,16 +14,23 @@
           - "'nginx' in ansible_facts.packages"
         fail_msg: "Nginx package is not installed on the system."
 
+    - name: Verify mysql package installation
+      assert:
+        that:
+          - "'mysql' in ansible_facts.packages"
+        fail_msg: "mysql package is not installed on the system."
+
     # Проверка состояния сервиса
     - name: Gather service facts
       service_facts:
 
-    - name: debug
-      debug:
-        var: 'ansible_facts'
-
     - name: Verify nginx service is running and enabled
       assert:
         that:
-          - "ansible_facts.services.nginx.state == 'running'"    
+          - "ansible_facts.services.nginx.state == 'running'"
+
+    - name: Verify mysql service is running and enabled
+      assert:
+        that:
+          - "ansible_facts.services.mysql.state == 'running'"       
 

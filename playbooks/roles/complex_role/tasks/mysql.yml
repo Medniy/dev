@@ -1,9 +1,21 @@
 ---
-- name: Install packages for mysql
-  block:
+
+
+- name: Install packages for mysql Debian
+  block: 
+    - name: Debug os_family
+      ansible.builtin.debug:
+        msg: "OS family is {{ ansible_facts['distribution'] }}"
+
+    - name: Установить gpg
+      ansible.builtin.apt:
+        name: gpg
+        state: present    
+        update_cache: yes
+
     - name: Добавить официальный репозиторий MySQL
       ansible.builtin.apt_repository:
-        repo: "deb [arch=amd64] https://repo.mysql.com/apt/debian {{ ansible_distribution_release }} mysql-8.0"
+        repo: "deb [arch=amd64 trusted=yes] https://repo.mysql.com/apt/debian bookworm mysql-8.0"
         state: present
         filename: mysql-apt-config
         update_cache: yes
@@ -27,53 +39,59 @@
         name: mysql
         state: started
         enabled: yes
-  when: ansible_facts['os_family'] == 'Debian'
-  
+  when: ansible_facts['distribution'] == 'Debian'
+
+- name: Install packages for mysql Ubuntu
   block:
-  - name: install packeges
-    ansible.builtin.apt:
-      update_cache: true
-      name:
-        - mysql-server
-        - mysql-client
-        - python3-pip
-      state: present
+    - name: Debug os_family
+      ansible.builtin.debug:
+        msg: "OS family is {{ ansible_facts['distribution'] }}"
 
-  - name: Install requirements
-    ansible.builtin.pip:
-      name: PyMySQL
-      state: present
-      executable: /usr/bin/pip3
+    - name: install packeges
+      ansible.builtin.apt:
+        update_cache: true
+        name:
+          - mysql-server
+          - mysql-client
+          - python3-pip
+        state: present
 
-  - name: Listen
-    ansible.builtin.lineinfile:
-      path: /etc/mysql/mysql.conf.d/mysqld.cnf
-      regexp: '^bind-address'
-      line: 'bind-address = 0.0.0.0'
-      state: present
-    notify: Restart_mysql
+    - name: Install requirements
+      ansible.builtin.pip:
+        name: PyMySQL
+        state: present
+        executable: /usr/bin/pip3
+  when: ansible_facts['distribution'] == 'Ubuntu'
 
-  - name: Immediately execute the handler
-    meta: flush_handlers
+- name: Listen
+  ansible.builtin.lineinfile:
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: '^bind-address'
+    line: 'bind-address = 0.0.0.0'
+    state: present
+  notify: Restart_mysql
 
-  - name: Check MySQL service start
-    ansible.builtin.shell: service mysql status || /etc/init.d/mysql start
-    changed_when: false
-    failed_when: false
+- name: Immediately execute the handler
+  meta: flush_handlers
 
-  - name: Create database
-    community.mysql.mysql_db:
-      name: "{{ complex_role_database_name }}"
-      state: present
-      login_unix_socket: /var/run/mysqld/mysqld.sock
+- name: Check MySQL service start
+  ansible.builtin.shell: service mysql status || /etc/init.d/mysql start
+  changed_when: false
+  failed_when: false
 
-  - name: Create database user
-    community.mysql.mysql_user:
-      name: "{{ complex_role_database_user }}"
-      password: "{{ complex_role_database_password }}"
-      priv: '{{ complex_role_database_name }}.*:ALL'
-      host: '%'
-      state: present
-      login_unix_socket: /var/run/mysqld/mysqld.sock
-  when: ansible_facts['os_family'] == 'Ubuntu'
+- name: Create database
+  community.mysql.mysql_db:
+    name: "{{ complex_role_database_name }}"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Create database user
+  community.mysql.mysql_user:
+    name: "{{ complex_role_database_user }}"
+    password: "{{ complex_role_database_password }}"
+    priv: '{{ complex_role_database_name }}.*:ALL'
+    host: '%'
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  
 ...
