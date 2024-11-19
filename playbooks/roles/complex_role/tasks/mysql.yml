@@ -13,30 +13,38 @@
         state: present    
         update_cache: yes
 
-    - name: Добавить официальный репозиторий MySQL
+    - name: Download MySQL GPG key
+      ansible.builtin.get_url:
+        url: https://repo.mysql.com/RPM-GPG-KEY-mysql
+        dest: /usr/share/keyrings/mysql-archive-keyring.gpg
+        mode: '0644'
+
+
+    - name: Add MySQL repository
       ansible.builtin.apt_repository:
-        repo: "deb [arch=amd64 trusted=yes] https://repo.mysql.com/apt/debian bookworm mysql-8.0"
+        repo: "deb [arch=amd64 trusted=true signed-by=/usr/share/keyrings/mysql-archive-keyring.gpg] https://repo.mysql.com/apt/debian {{ ansible_distribution_release }} mysql-8.0"
         state: present
-        filename: mysql-apt-config
-        update_cache: yes
-
-    - name: Добавить ключ репозитория MySQL
-      ansible.builtin.apt_key:
-        url: "https://repo.mysql.com/RPM-GPG-KEY-mysql"
-        state: present
-
-    - name: Обновить кэш APT
-      ansible.builtin.apt:
         update_cache: yes
 
     - name: Установить MySQL Server
       ansible.builtin.apt:
-        name: mysql-server
+        name: 
+          - mysql-server
+          - mysql-client
         state: present
+        update_cache: yes
+
+    - name: Gather service facts
+      service_facts:
+
+    - name: Debug
+      debug:
+        var: ansible_facts.services    
 
     - name: Убедиться, что MySQL запущен
       ansible.builtin.service:
-        name: mysql
+        name: 
+          - mysql
         state: started
         enabled: yes
   when: ansible_facts['distribution'] == 'Debian'
