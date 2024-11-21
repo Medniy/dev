@@ -1,4 +1,4 @@
-FROM debian
+FROM jrei/systemd-debian
 
 # Установка Python 3 и зависимостей
 RUN apt-get update && \

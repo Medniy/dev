@@ -4,7 +4,7 @@ driver:
 
 platforms:
   - name: debian
-    image: "debian"
+    image: "jrei/systemd-debian"
     privileged: true    
     dockerfile: ../dockerfile  # Указываем путь к кастомному Dockerfile
 

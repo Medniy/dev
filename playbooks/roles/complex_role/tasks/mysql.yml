@@ -1,60 +1,34 @@
 ---
 
 
-- name: Install packages for mysql Debian
-  block: 
-    - name: Debug os_family
-      ansible.builtin.debug:
-        msg: "OS family is {{ ansible_facts['distribution'] }}"
+- name: Install packages for MariaDB Debian
+  block:   
 
-    - name: Установить gpg
+    - name: Установить MariaDB Server
       ansible.builtin.apt:
-        name: gpg
-        state: present    
-        update_cache: yes
-
-    - name: Download MySQL GPG key
-      ansible.builtin.get_url:
-        url: https://repo.mysql.com/RPM-GPG-KEY-mysql
-        dest: /usr/share/keyrings/mysql-archive-keyring.gpg
-        mode: '0644'
-
-
-    - name: Add MySQL repository
-      ansible.builtin.apt_repository:
-        repo: "deb [arch=amd64 trusted=true signed-by=/usr/share/keyrings/mysql-archive-keyring.gpg] https://repo.mysql.com/apt/debian {{ ansible_distribution_release }} mysql-8.0"
+        name: 
+          - mariadb-server
+          - mariadb-client
+          - python3-pip
         state: present
         update_cache: yes
 
-    - name: Установить MySQL Server
-      ansible.builtin.apt:
-        name: 
-          - mysql-server
-          - mysql-client
+    - name: Listen MariaDB bind address
+      ansible.builtin.lineinfile:
+        path: /etc/mysql/my.cnf
+        regexp: '^bind-address'
+        line: 'bind-address = 0.0.0.0'
         state: present
-        update_cache: yes
+     
 
-    - name: Gather service facts
-      service_facts:
-
-    - name: Debug
-      debug:
-        var: ansible_facts.services    
-
-    - name: Убедиться, что MySQL запущен
-      ansible.builtin.service:
-        name: 
-          - mysql
-        state: started
-        enabled: yes
+    - name: Check MySQL service start
+      ansible.builtin.shell: service mariadb status || /etc/init.d/mariadb start
+      changed_when: false
+      failed_when: false
   when: ansible_facts['distribution'] == 'Debian'
 
 - name: Install packages for mysql Ubuntu
   block:
-    - name: Debug os_family
-      ansible.builtin.debug:
-        msg: "OS family is {{ ansible_facts['distribution'] }}"
-
     - name: install packeges
       ansible.builtin.apt:
         update_cache: true
@@ -62,30 +36,30 @@
           - mysql-server
           - mysql-client
           - python3-pip
+        state: present  
+    
+    - name: Listen
+      ansible.builtin.lineinfile:
+        path: /etc/mysql/mysql.conf.d/mysqld.cnf
+        regexp: '^bind-address'
+        line: 'bind-address = 0.0.0.0'
         state: present
-
-    - name: Install requirements
-      ansible.builtin.pip:
-        name: PyMySQL
-        state: present
-        executable: /usr/bin/pip3
+      notify: Restart_mysql
+    
+    - name: Check MySQL service start
+      ansible.builtin.shell: service mysql status || /etc/init.d/mysql start
+      changed_when: false
+      failed_when: false
   when: ansible_facts['distribution'] == 'Ubuntu'
 
-- name: Listen
-  ansible.builtin.lineinfile:
-    path: /etc/mysql/mysql.conf.d/mysqld.cnf
-    regexp: '^bind-address'
-    line: 'bind-address = 0.0.0.0'
+- name: Install requirements
+  ansible.builtin.pip:
+    name: PyMySQL
     state: present
-  notify: Restart_mysql
+    executable: /usr/bin/pip3
 
 - name: Immediately execute the handler
   meta: flush_handlers
-
-- name: Check MySQL service start
-  ansible.builtin.shell: service mysql status || /etc/init.d/mysql start
-  changed_when: false
-  failed_when: false
 
 - name: Create database
   community.mysql.mysql_db:

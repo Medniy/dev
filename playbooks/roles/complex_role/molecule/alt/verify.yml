@@ -14,11 +14,6 @@
           - "'nginx' in ansible_facts.packages"
         fail_msg: "Nginx package is not installed on the system."
 
-    - name: Verify mysql package installation
-      assert:
-        that:
-          - "'mysql' in ansible_facts.packages"
-        fail_msg: "mysql package is not installed on the system."
 
     # Проверка состояния сервиса
     - name: Gather service facts
@@ -28,9 +23,31 @@
       assert:
         that:
           - "ansible_facts.services.nginx.state == 'running'"
+    
+    - name: Verify mariadb package installation
+      assert:
+        that:
+          - "'mariadb-server' in ansible_facts.packages"
+        fail_msg: "mariadb package is not installed on the system."
+      when: ansible_facts['distribution'] == 'Debian'
+
+    - name: Verify mariadb service is running and enabled
+      assert:
+        that:
+          - "ansible_facts.services.mariadb.state == 'running'"
+      when: ansible_facts['distribution'] == 'Debian'
+
+    
+    - name: Verify mysql package installation
+      assert:
+        that:
+          - "'mysql' in ansible_facts.packages"
+        fail_msg: "mysql package is not installed on the system."
+      when: ansible_facts['distribution'] == 'Ubuntu'
 
     - name: Verify mysql service is running and enabled
       assert:
         that:
-          - "ansible_facts.services.mysql.state == 'running'"       
+          - "ansible_facts.services.mysql.state == 'running'"
+      when: ansible_facts['distribution'] == 'Ubuntu'       
 
