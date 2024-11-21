@@ -7,9 +7,4 @@
 
 - name: Restart_nginx
   ansible.builtin.command: /etc/init.d/nginx restart
-
-- name: Restart MariaDB
-  ansible.builtin.service:
-    name: mariadb
-    state: restarted
 ...

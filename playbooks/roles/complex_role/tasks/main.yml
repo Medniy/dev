@@ -5,4 +5,7 @@
 
   - name: Enclude task Nginx
     ansible.builtin.include_tasks: nginx.yml
+
+  - name: Enclude task Redis
+    ansible.builtin.include_tasks: redis.yml
 ...

@@ -1,9 +1,6 @@
 ---
-
-
 - name: Install packages for MariaDB Debian
-  block:   
-
+  block:
     - name: Установить MariaDB Server
       ansible.builtin.apt:
         name: 
@@ -18,8 +15,7 @@
         path: /etc/mysql/my.cnf
         regexp: '^bind-address'
         line: 'bind-address = 0.0.0.0'
-        state: present
-     
+        state: present     
 
     - name: Check MySQL service start
       ansible.builtin.shell: service mariadb status || /etc/init.d/mariadb start

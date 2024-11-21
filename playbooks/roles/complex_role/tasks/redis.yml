@@ -1,0 +1,32 @@
+- name: Install Redis
+  ansible.builtin.apt:
+    name: redis-server
+    state: present
+    update_cache: yes
+
+- name: Configure Redis memory limits
+  ansible.builtin.lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: '^maxmemory'
+    line: 'maxmemory 256mb'
+    state: present
+    backrefs: yes
+
+- name: Configure eviction policy
+  ansible.builtin.lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: '^maxmemory-policy'
+    line: 'maxmemory-policy allkeys-lru'
+    state: present
+    backrefs: yes
+
+- name: Enable password protection
+  ansible.builtin.lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: '^# requirepass'
+    line: 'requirepass @Dministrat0'
+
+- name: Restart_redis
+  ansible.builtin.shell: service redis-server status || /etc/init.d/redis-server start
+  changed_when: false
+  failed_when: false
