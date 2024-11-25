@@ -4,7 +4,7 @@
   gather_facts: true
 
   tasks:
-    # Проверка наличия установленного пакета
+    # Проверка наличия установленного пакета nginx
     - name: Ensure nginx package is installed
       package_facts:
 
@@ -14,24 +14,37 @@
           - "'nginx' in ansible_facts.packages"
         fail_msg: "Nginx package is not installed on the system."
 
-
-    # Проверка состояния сервиса
+    # Проверка состояния сервиса nginx
     - name: Gather service facts
       service_facts:
 
     - name: Verify nginx service is running and enabled
       assert:
         that:
-          - "ansible_facts.services.nginx.state == 'running'"
-    
-    - name: Verify mariadb package installation
+          - "ansible_facts.services.nginx.state == 'running'" 
+
+    # Проверка наличия установленного пакета mysql-server
+    - name: Verify mysql package installation
       assert:
         that:
-          - "'mariadb-server' in ansible_facts.packages"
-        fail_msg: "mariadb package is not installed on the system."
-
-    - name: Verify mariadb service is running and enabled
+          - "'mysql-server' in ansible_facts.packages"
+        fail_msg: "mysql package is not installed on the system."
+     
+    # Проверка состояния сервиса mysql
+    - name: Verify mysql service is running and enabled
       assert:
         that:
-          - "ansible_facts.services.mariadb.state == 'running'"
+          - "ansible_facts.services.mysql.state == 'running'"   
 
+    # Проверка наличия установленного пакета redis-server
+    - name: Verify redis package installation
+      assert:
+        that:
+          - "'redis-server' in ansible_facts.packages"
+        fail_msg: "redis package is not installed on the system."
+     
+    # Проверка состояния сервиса redis
+    - name: Verify redis service is running and enabled
+      assert:
+        that:
+          - "ansible_facts.services.redis.state == 'running'"
