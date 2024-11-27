@@ -1,0 +1,20 @@
+---
+# tasks file for ssh
+- name: copy ssh openkeys
+  copy:
+    src: roles/ssh/files/
+    dest: /etc/openssh/authorized_keys/
+    mode: '0700'
+
+- name: edit sshd_config
+  lineinfile:
+    path: /etc/openssh/sshd_config
+    regexp: "{{ item.old }}"
+    line: "{{ item.new }}"
+    state: present
+  loop:
+    - {old: '^#?PermitRootLogin.*', new: 'PermitRootLogin no'}
+    - {old: '^#?AllowGroups.*', new: 'AllowGroups remote'}
+    - {old: '^#AuthorizedKeysFile', new: 'AuthorizedKeysFile /etc/openssh/authorized_keys/%u'}
+  notify: restart sshd
+

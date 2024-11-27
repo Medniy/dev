@@ -1,0 +1,6 @@
+---
+# handlers file for alt-wrk
+- name: restart sshd
+  systemd_service:
+    name: sshd
+    state: restarted

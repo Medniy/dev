@@ -1,0 +1,10 @@
+---
+# defaults file for alt-wrk
+cert_source_url: "http://uc.nalog.ru/crt/ca_fns_russia_2023_01.crt"
+crl_source_url: "http://uc.nalog.ru/cdp/d156fb382c4c55ad7eb3ae0ac66749577f87e116.crl"
+certs_dest_dir: "/etc/pki/ca-trust/source/anchors"
+crl_dest_dir: "/etc/pki/CA/crl"
+crypto_pro_bin: "/opt/cprocsp/bin/amd64/certmgr"
+proxy_url: "http://proxy4.phg.gazprom.ru:3128"
+fstab_line: "//adm-smb/phg /mnt/phg cifs user,rw,nofail,_netdev,noauto,sec=krb5 0 0"
+mount_dir: "/mnt/phg"

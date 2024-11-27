@@ -1,0 +1,23 @@
+---
+# tasks file for install_samoware
+- name: Copy files
+  copy:
+    src: "{{ item }}"
+    dest: "/tmp"
+  loop:
+      - samoware.rpm
+      - communigaterunner.rpm
+
+- name: Remove samoware
+  community.general.apt_rpm:
+    name:
+      - samoware
+      - communigaterunner
+    state: absent
+
+- name: Install samoware
+  community.general.apt_rpm:
+    name:
+      - /tmp/samoware.rpm
+      - /tmp/communigaterunner.rpm
+    state: present

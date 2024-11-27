@@ -1,0 +1,13 @@
+---
+# tasks file for edit fstab
+- name: Create phg dir
+  ansible.builtin.file:
+    path "{{ mount_dir }}"
+    state: directory
+
+- name: Edit fstab
+  lineinfile:
+    path: /etc/fstab
+    line: "{{ flstab_line }}"
+    state: present
+

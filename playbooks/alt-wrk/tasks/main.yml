@@ -1,0 +1,16 @@
+---
+# tasks file for alt-wrk
+- name: Include task env
+  ansible.builtin.include_tasks: env.yml
+
+- name: Include task certs
+  ansible.builtin.include_tasks: certs.yml
+
+- name: Include task fstab
+  ansible.builtin.include_tasks: fstab.yml
+  
+- name: Include task ssh_config
+  ansible.builtin.include_tasks: ssh_config.yml
+  
+- name: Include task samoware
+  ansible.builtin.include_tasks: samoware.yml

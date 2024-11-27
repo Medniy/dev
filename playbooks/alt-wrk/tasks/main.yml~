@@ -1,0 +1,67 @@
+---
+# tasks file for alt-wrk
+- name: Add proxy env to /etc/environment
+  ansible.builtin.lineinfile:
+    path: /etc/environment
+    regexp: '^{{ item.key }}='
+    line: '{{ item.key }}="{{ item.value }}"'
+    state: present
+  loop:
+      - { key: "HTTPS_PROXY", value: "http://auth.secphg.phg.gazprom.ru:8090" }
+      - { key: "HTTP_PROXY", value: "http://auth.secphg.phg.gazprom.ru:8090" }
+      - { key: "http_proxy", value: "http://auth.secphg.phg.gazprom.ru:8090" }
+      - { key: "https_proxy", value: "http://auth.secphg.phg.gazprom.ru:8090" }
+
+# Download and install certs and crl
+- name: Ensure destionation dirs exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ certs_dest_dir }}"
+    - "{{ crl_dest_dir }}"
+
+- name: Download the certs
+  ansible.builtin.get_url:
+    url: "{{ cert_source_url }}"
+    dest: "{{ certs_dest_dir }}/fns_2023.crt"
+    mode: '0644'
+    use_proxy: yes
+  environment:
+    http_proxy: "{{ proxy_url }}"
+    https_proxy: "{{ proxy_url }}"
+
+- name: Download CRL
+  ansible.builtin.get_url:
+    url: "{{ crl_source_url }}"
+    dest: "{{ crl_dest_dir }}/fns_2023.crl"
+    mode: '0644'
+    use_proxy: yes
+  environment:
+    http_proxy: "{{ proxy_url }}"
+    https_proxy: "{{ proxy_url }}"
+
+- name: Update system certs
+  ansible.builtin.command: update-ca-trust
+  
+- name: Import certificate to CryptoPro
+  ansible.builtin.command: "{{ crypto_pro_bin }} -inst -store mRoot -file {{ certs_dest_dir }}/fns_2023.crt"
+  register: cprocsp_result
+  failed_when: "'Error' in cprocsp_result.stdout"
+  changed_when: "'Success' in cprocsp_result.stdout"
+
+- name: Import CRL to CryptoPro
+  ansible.builtin.command: "{{ crypto_pro_bin }} -inst -crl -file {{ crl_dest_dir }}/fns_2023.crl"
+  register: cprocsp_crl_result
+  failed_when: "'Error' in cprocsp_crl_result.stdout"
+  changed_when: "'Success' in cprocsp_crl_result.stdout"
+
+- name: Debug CryptoPro certificate import result
+  ansible.builtin.debug:
+    var: cprocsp_result.stdout
+
+- name: Debug CryptoPro CRL import result
+  ansible.builtin.debug:
+    var: cprocsp_crl_result.stdout
+  

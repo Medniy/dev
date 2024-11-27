@@ -1,0 +1,7 @@
+# Local package resource list for APT goes here.
+# To inspect package defined part, see /etc/apt/sources.list.d/*.list
+rpm http://adm-alt-update.phg.gazprom.ru/mirror p10/branch/x86_64 classic
+rpm http://adm-alt-update.phg.gazprom.ru/mirror p10/branch/noarch classic
+rpm http://adm-alt-update.phg.gazprom.ru/mirror p10/branch/x86_64-i586 classic
+#rpm http://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus x86_64 classic
+#rpm http://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus noarch classic

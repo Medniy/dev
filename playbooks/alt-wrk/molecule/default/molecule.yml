@@ -1,0 +1,28 @@
+---
+driver:
+  name: docker
+
+platforms:
+  - name: alt
+    image: alt:p10
+    priveleged: true
+
+dependency:
+  name: galaxy
+
+provisioner:
+  name: ansible
+  lint:
+    name: anible-lint
+  playbooks:
+    converge: converge.yml
+
+scenario:
+  test_sequence:
+    - create
+    - converge
+    - verify
+    - destroy
+    # you might want to add your own variables here based on what provisioning
+    # you are doing like:
+    # image: quay.io/centos/centos:stream8

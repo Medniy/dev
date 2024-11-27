@@ -1,0 +1,23 @@
+---
+driver:
+  name: docker
+  
+platforms:
+  - name: alt
+    image: "altlinux:latest"
+    network_mode: host
+    pre_build_image: true
+    dns_servers:
+      - 10.51.177.5
+      - 10.51.177.6
+            
+provisioner:
+  name: ansible
+  playbooks:
+    converge: converge.yml
+
+verifier:
+  name: testinfra
+    # you might want to add your own variables here based on what provisioning
+    # you are doing like:
+    # image: quay.io/centos/centos:stream8
