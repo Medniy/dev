@@ -1,3 +1,4 @@
 FROM nginx
 COPY index.html /var/www/html/index.html
-CMD ["sh"]
+ENTRYPOINT ["nginx"]
+CMD ["-g", "daemon off;"]
