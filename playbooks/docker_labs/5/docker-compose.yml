@@ -4,6 +4,11 @@ services:
     image: nginx
     secrets:
       - my_secret
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 secrets:
   my_secret:
     external: true
