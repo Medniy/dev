@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  app:
+    image: nginx:latest
+    deploy:
+      update_config:
+        parallelism: 2         # Обновлять 2 задачи одновременно
+        delay: 10s             # Задержка между обновлениями групп задач
+        failure_action: rollback # Откат в случае неудачи
+        order: start-first     # Сначала запустить новый контейнер, затем остановить старый
+      rollback_config:
+        parallelism: 1         # Откатывать задачи по одной
+        delay: 5s              # Задержка между откатами групп задач
+      replicas: 3              # Количество задач (контейнеров)
